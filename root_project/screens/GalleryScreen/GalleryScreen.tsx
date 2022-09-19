@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import {
   clearPhotosArray,
+  setIsLoading,
   updatePhotosArray,
 } from '../../store/reducers/photos';
 import { updatePhotos } from '../../store/sagas/photos-actions';
@@ -23,6 +24,7 @@ const GalleryScreen = ({ navigation }) => {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
+    dispatch(setIsLoading());
     dispatch(updatePhotos(1));
     return () => {
       dispatch(clearPhotosArray());
@@ -31,22 +33,21 @@ const GalleryScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <FlatList
-          data={photos}
-          renderItem={({ item }) => (
-            <PhotoComponent photo={item} navigation={navigation} />
-          )}
-          contentContainerStyle={styles.listStyle}
-          onEndReached={() => {
-            setPage(page + 1);
-            dispatch({ type: updatePhotos(page) });
-          }}
-          onEndReachedThreshold={0.3}
-        />
-      )}
+      <FlatList
+        data={photos}
+        renderItem={({ item }) => (
+          <PhotoComponent photo={item} navigation={navigation} key={item.id} />
+        )}
+        contentContainerStyle={styles.listStyle}
+        onEndReached={() => {
+          let curPage = page + 1;
+          setPage(curPage);
+          dispatch(setIsLoading());
+          dispatch(updatePhotos(curPage));
+        }}
+        onEndReachedThreshold={0.1}
+      />
+      {isLoading && <ActivityIndicator />}
     </View>
   );
 };

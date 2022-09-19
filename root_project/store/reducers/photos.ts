@@ -19,7 +19,7 @@ const photosSlice = createSlice({
   reducers: {
     updatePhotosArray: (state, action) => {
       console.log(action.payload);
-      state.photosArray = [...state.photosArray, ...action.payload];
+      state.photosArray.push(...action.payload);
       state.isLoading = false;
     },
     clearPhotosArray: state => {

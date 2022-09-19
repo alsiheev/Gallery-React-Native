@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -16,8 +16,27 @@ interface PhotoProps {
 
 const PhotoComponent = (props: PhotoProps) => {
   const { photo, navigation } = props;
+  const animatedValue = useRef(new Animated.Value(0)).current;
 
-  const [scale, setScale] = useState(1);
+  const animatedStyle = {
+    transform: [{ translateX: animatedValue }, { translateY: animatedValue }],
+  };
+
+  const handlePressIn = () => {
+    Animated.timing(animatedValue, {
+      toValue: -7,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.timing(animatedValue, {
+      toValue: 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
     <View style={[styles.container]}>
@@ -29,28 +48,36 @@ const PhotoComponent = (props: PhotoProps) => {
           backgroundColor: photo.color,
           opacity: 0.4,
           left: '10%',
-        }}></View>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          navigation.navigate('PhotoScreen', { uri: photo.urls.regular });
         }}
-        onPressIn={() => setScale(1.1)}
-        onPressOut={() => setScale(1)}>
-        <Animated.View>
-          <Image
-            source={{
-              uri: photo.urls.small,
-            }}
-            style={[
-              styles.photo,
-              {
-                transform: [{ scale: scale }],
-              },
-            ]}
-            resizeMode="cover"
-          />
-        </Animated.View>
-      </TouchableWithoutFeedback>
+      />
+      <View>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            navigation.navigate('PhotoScreen', {
+              uri: photo.urls.regular,
+              color: photo.color,
+            });
+          }}
+          onPressIn={() => handlePressIn()}
+          onPressOut={() => handlePressOut()}>
+          <Animated.View>
+            <Animated.Image
+              source={{
+                uri: photo.urls.small,
+              }}
+              // @ts-ignore
+              style={[styles.photo, animatedStyle]}
+              resizeMode="cover"
+            />
+          </Animated.View>
+        </TouchableWithoutFeedback>
+        <View
+          style={[
+            styles.photo,
+            { backgroundColor: 'gray', position: 'absolute', zIndex: -1000 },
+          ]}
+        />
+      </View>
       <View style={styles.user}>
         <Text
           numberOfLines={1}

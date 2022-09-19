@@ -9,11 +9,11 @@ import Config from 'react-native-config';
 
 export function* photoInitSaga() {}
 
-export function* photosUpdateSaga(action = { page: 1 }) {
+export function* photosUpdateSaga(action: any) {
   try {
-    const page = action.page;
+    console.log(action.page)
+    const page = action.page || 1;
     const api = `https://api.unsplash.com/photos?client_id=${Config.API_KEY}&page=${page}`;
-    yield put(setIsLoading());
     // @ts-ignore
     let result = yield call(() => fetch(api, {}).then(res => res.json()));
     yield put(updatePhotosArray(result));
