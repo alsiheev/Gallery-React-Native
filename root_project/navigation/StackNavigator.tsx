@@ -12,7 +12,11 @@ const StackNavigator = () => {
         component={GalleryScreen}
         options={{ title: 'Gallery' }}
       />
-      <Stack.Screen name="PhotoScreen" component={PhotoScreen} />
+      <Stack.Screen
+        name="Photo"
+        component={PhotoScreen}
+        options={({ route }) => ({ title: route.params.name || 'Photo' })}
+      />
     </Stack.Navigator>
   );
 };

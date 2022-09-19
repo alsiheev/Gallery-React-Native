@@ -53,9 +53,10 @@ const PhotoComponent = (props: PhotoProps) => {
       <View>
         <TouchableWithoutFeedback
           onPress={() => {
-            navigation.navigate('PhotoScreen', {
+            navigation.navigate('Photo', {
               uri: photo.urls.regular,
               color: photo.color,
+              name: photo.user.name,
             });
           }}
           onPressIn={() => handlePressIn()}
